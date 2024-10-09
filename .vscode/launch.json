@@ -1,0 +1,27 @@
+{
+    /*
+    This debugging task is set to first run the run-gdb-backend-xv6 task in tasks.json.
+    That task simply runs `make vscode-gdb` and the endsPattern is set to the echo
+    of that make target. Once that happened, this debug session tries to launch gdb 
+    at the fixed port 26005 since that is what user id 1005 will end up using 
+    (assuming we are running in the docker container).
+    */
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug xv6",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/kernel/kernel",
+            "miDebuggerServerAddress": "localhost:26005",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceRoot}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb-multiarch",
+            "preLaunchTask": "run-gdb-backend-xv6"
+        },
+    ]
+}
