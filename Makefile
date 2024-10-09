@@ -149,6 +149,7 @@ UPROGS=\
 	$U/_halt\
 	$U/_hello\
 	$U/_xargs\
+	$U/_hi_asm_write\
 
 UPROGS += $(EXTRA_UPROGS)
 
