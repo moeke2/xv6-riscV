@@ -148,6 +148,7 @@ UPROGS=\
 	$U/_zombie\
 	$U/_halt\
 	$U/_hello\
+	$U/_xargs\
 
 UPROGS += $(EXTRA_UPROGS)
 
