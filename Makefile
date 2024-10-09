@@ -147,6 +147,7 @@ UPROGS=\
 	$U/_wc\
 	$U/_zombie\
 	$U/_halt\
+	$U/_hello\
 
 UPROGS += $(EXTRA_UPROGS)
 
