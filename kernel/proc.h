@@ -113,6 +113,7 @@ struct proc {
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
   uint64 numsyscalls;          // track the number of system calls
+  int traceme;                 // enable or disable traceme
 };
 
 #endif

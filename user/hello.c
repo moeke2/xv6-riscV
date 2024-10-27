@@ -9,5 +9,5 @@ main(int argc, char *argv[])
         fprintf(2, "cat: write error\n");
         exit(1);
     }
-    puts("test");
+    puts("test\n");
 }

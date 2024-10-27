@@ -31,6 +31,7 @@ void vmprintmappings(void);
 void halt(void) __attribute__((noreturn));
 int puts(const char*);
 int getnumsyscalls(void);
+void traceme(int);
 
 // ulib.c
 int stat(const char*, struct stat*);
