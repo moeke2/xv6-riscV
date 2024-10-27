@@ -151,6 +151,7 @@ UPROGS=\
 	$U/_xargs\
 	$U/_introspection\
 	$U/_hi_asm_write\
+	$U/_syscallcount\
 
 UPROGS += $(EXTRA_UPROGS)
 

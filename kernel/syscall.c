@@ -103,6 +103,7 @@ extern uint64 sys_mkdir(void);
 extern uint64 sys_close(void);
 extern uint64 sys_vmprintmappings(void);
 extern uint64 sys_halt(void);
+extern uint64 sys_getnumsyscalls(void);
 
 // An array mapping syscall numbers from syscall.h
 // to the function that handles the system call.
@@ -130,6 +131,7 @@ static uint64 (*syscalls[])(void) = {
 [SYS_close]   sys_close,
 [SYS_vmprintmappings] sys_vmprintmappings,
 [SYS_halt]    sys_halt,
+[SYS_getnumsyscalls] sys_getnumsyscalls,
 };
 
 void
@@ -143,6 +145,7 @@ syscall(void)
     // Use num to lookup the system call function for num, call it,
     // and store its return value in p->trapframe->a0
     p->trapframe->a0 = syscalls[num]();
+    p->numsyscalls++;
   } else {
     printf("%d %s: unknown sys call %d\n",
             p->pid, p->name, num);

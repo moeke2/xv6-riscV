@@ -98,3 +98,9 @@ sys_vmprintmappings(void)
   vmprintmappings(myproc()->pagetable);
   return 0;
 }
+
+uint64
+sys_getnumsyscalls(void){
+  struct proc *p = myproc();
+  return p->numsyscalls;
+}

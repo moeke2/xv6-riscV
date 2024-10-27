@@ -124,6 +124,8 @@ allocproc(void)
 found:
   p->pid = allocpid();
   p->state = USED;
+  p->numsyscalls = 0;  // Initialize syscall count to zero for new process(if this line 
+  //was removed,numsyscalls would contain the number of all systemcalls that have been executed)
 
   // Allocate a trapframe page.
   if((p->trapframe = (struct trapframe *)kalloc()) == 0){
@@ -693,3 +695,4 @@ procdump(void)
     printf("\n");
   }
 }
+

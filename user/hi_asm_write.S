@@ -3,19 +3,21 @@
 .text
 .global main
 main:
-li a0, 1                    
+    li a0, 1                    
 
-la a1, hello_str             
+    la a1, hello_str             
 
-li a7, SYS_write             
+    li a2, 14
+    
+    li a7, SYS_write                             
 
-li a2, 14                
+    ecall       
 
-ecall                        
+    jalr zero, ra                 
 
-li a0, 0                     
-li a7, SYS_exit             
-ecall                       
+    #li a0, 0                     
+    #li a7, SYS_exit             
+    #ecall                       
 
 .section .rodata
 hello_str:

@@ -29,8 +29,8 @@ int sleep(int);
 int uptime(void);
 void vmprintmappings(void);
 void halt(void) __attribute__((noreturn));
-
 int puts(const char*);
+int getnumsyscalls(void);
 
 // ulib.c
 int stat(const char*, struct stat*);
