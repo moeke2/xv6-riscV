@@ -127,6 +127,7 @@ found:
   p->numsyscalls = 0;  // Initialize syscall count to zero for new process(if this line 
   //was removed,numsyscalls would contain the number of all systemcalls that have been executed)
   p->traceme = 0;  //if this is set to a number != 0, it will print all system calls in the process
+  p->tracefd = -1; 
 
   // Allocate a trapframe page.
   if((p->trapframe = (struct trapframe *)kalloc()) == 0){

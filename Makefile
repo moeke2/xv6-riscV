@@ -155,6 +155,7 @@ UPROGS=\
 	$U/_syscallcount\
 	$U/_trace\
 	$U/_shebangtest\
+	$U/_tracefd\
 
 UPROGS += $(EXTRA_UPROGS)
 
