@@ -154,8 +154,11 @@ UPROGS=\
 	$U/_hi_asm_write\
 	$U/_syscallcount\
 	$U/_trace\
+	$U/_shebangtest\
 
 UPROGS += $(EXTRA_UPROGS)
+
+EXTRA_FS_FILES += $U/hello.sh
 
 fs.img: mkfs/mkfs README $(UPROGS) $(EXTRA_FS_FILES)
 	mkfs/mkfs fs.img README $(UPROGS) $(EXTRA_FS_FILES)

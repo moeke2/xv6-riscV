@@ -7,6 +7,10 @@
 #include "defs.h"
 #include "elf.h"
 
+#define MAX_SHEBANG 64
+#define MAX_ARGS 12
+
+
 static int loadseg(pde_t *, uint64, struct inode *, uint, uint);
 
 int flags2perm(int flags)
@@ -38,6 +42,52 @@ exec(char *path, char **argv)
     return -1;
   }
   ilock(ip);
+
+  //check shebang
+  char buf[MAX_SHEBANG];
+  int n_read = readi(ip, 0, (uint64)buf, 0, sizeof(char) * MAX_SHEBANG);
+  if(n_read <= 0)
+    goto bad;
+
+  if(n_read > 2 && buf[0] == '#' && buf[1] == '!') {
+    i = 0;
+    // Find end of line
+    for(i = 2; i<n_read; ++i) {
+      if(buf[i] == 0 || buf[i] == '\n') {
+        // Null terminate the line
+        buf[i] = 0;
+        break;
+      }
+    }
+    // Shebang too long
+    if (buf[i] != 0) {
+      goto bad;
+    }
+    // Compute new arguments: exec(interpr, [interpr, args]);
+    i = 0;
+    char *argv2[MAX_ARGS];
+    argv2[i] = buf + 2;
+    while (argv[i] != 0 && i < MAX_ARGS - 1)
+    {
+      argv2[i + 1] = argv[i];
+      ++i;
+    }
+    argv2[i + 1] = 0;
+
+    // Release script file
+    iunlockput(ip);
+
+    // Replace arguments and open interpreter
+    path = argv2[0];
+    argv = argv2;
+    if ((ip = namei(path)) == 0)
+    {
+      end_op();
+      return -1;
+    }
+    ilock(ip);
+  }
+
 
   // Check ELF header
   if(readi(ip, 0, (uint64)&elf, 0, sizeof(elf)) != sizeof(elf))
