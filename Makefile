@@ -159,6 +159,7 @@ UPROGS=\
 	$U/_pf\
 	$U/_vmfork\
 	$U/_vmprint\
+	$U/_uptime\
 
 UPROGS += $(EXTRA_UPROGS)
 

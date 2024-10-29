@@ -64,6 +64,8 @@
 //   ...
 //   TRAPFRAME (p->trapframe, used by the trampoline)
 //   TRAMPOLINE (the same page as in the kernel)
+//   VDSOPAGE (_vdso_start)
 #define TRAPFRAME (TRAMPOLINE - PGSIZE)
+#define VDSOPAGE (TRAPFRAME - PGSIZE)
 
 #endif
