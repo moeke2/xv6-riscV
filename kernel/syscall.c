@@ -106,6 +106,7 @@ extern uint64 sys_vmprintmappings(void);
 extern uint64 sys_halt(void);
 extern uint64 sys_getnumsyscalls(void);
 extern uint64 sys_traceme(void);
+extern uint64 sys_mmap(void);
 
 // An array mapping syscall numbers from syscall.h
 // to the function thatsys_traceme handles the system call.
@@ -135,6 +136,7 @@ static uint64 (*syscalls[])(void) = {
 [SYS_halt]    sys_halt,
 [SYS_getnumsyscalls] sys_getnumsyscalls,
 [SYS_traceme] sys_traceme,
+[SYS_mmap]    sys_mmap,
 };
 
 void

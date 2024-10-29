@@ -27,5 +27,7 @@
 #define SYS_halt   23
 #define SYS_getnumsyscalls  24
 #define SYS_traceme 25
+#define SYS_mmap   26
+
 
 #endif

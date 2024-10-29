@@ -104,3 +104,52 @@ sys_getnumsyscalls(void){
   struct proc *p = myproc();
   return p->numsyscalls;
 }
+
+uint64
+sys_mmap(void)
+{
+  struct proc *p = myproc();
+
+  // Feth the system call arguments from the trap frame
+  uint64 vaddr;
+  int    perms;
+  argaddr(0, &vaddr);
+  argint(1, &perms);
+  vaddr = PGROUNDDOWN(vaddr);
+
+  // Verify that vaddr is not already mapped
+  if (walkaddr(p->pagetable, vaddr) != 0)
+    return -1;
+
+  // Sanitize perms
+  perms &= (PTE_R | PTE_W | PTE_X);
+  if (perms == 0)
+    return -1;
+  perms |= PTE_U;
+
+  // Get index to free element in mmapped
+  int idx = 0;
+  while ( (idx < MAXMMAP) && (p->mmapped[idx] != 0) ) {
+    idx++;
+  }
+
+  // Verify that the process will not exceed MAXMMAP number of mmapped pages.
+  if (idx >= MAXMMAP)
+    return -1;
+
+  // Allocate a new phyisical page and map vaddr
+  char * paddr = kalloc();
+  if (paddr == 0)
+    return -1;
+  memset(paddr, 0, PGSIZE);
+  if (mappages(p->pagetable, vaddr, PGSIZE, (uint64) paddr, perms) != 0)
+  {
+    kfree(paddr);
+    return -1;
+  }
+
+  // Record the mapped page
+  p->mmapped[idx] = vaddr;
+
+  return 0;
+}

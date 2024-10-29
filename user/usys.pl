@@ -40,3 +40,4 @@ entry("vmprintmappings");
 entry("halt");
 entry("getnumsyscalls");
 entry("traceme");
+entry("mmap");

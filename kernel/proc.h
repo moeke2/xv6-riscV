@@ -115,6 +115,8 @@ struct proc {
   uint64 numsyscalls;          // track the number of system calls
   int traceme;                 // enable or disable traceme
   int tracefd;                 // fd this process is writing traces to
+  uint64 mmapped[MAXMMAP];     // to keep track of mmapped pages
+
 };
 
 #endif

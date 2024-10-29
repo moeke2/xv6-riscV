@@ -146,6 +146,9 @@ found:
     return 0;
   }
 
+  // An empty set of mmapped pages
+  memset(p->mmapped, 0, sizeof(p->mmapped));
+
   // Set up new context to start executing at forkret,
   // which returns to user space.
   memset(&p->context, 0, sizeof(p->context));
@@ -161,6 +164,11 @@ found:
 static void
 freeproc(struct proc *p)
 {
+  for (int i=0; i < MAXMMAP; i++)
+    if (p->mmapped[i] != 0)
+      uvmunmap(p->pagetable, p->mmapped[i], 1, 1);
+  memset(p->mmapped, 0, sizeof(p->mmapped));
+
   if(p->trapframe)
     kfree((void*)p->trapframe);
   p->trapframe = 0;
@@ -312,6 +320,18 @@ fork(void)
     return -1;
   }
   np->sz = p->sz;
+
+  // Copy mmapped pages from parent to child
+  for (int i=0; i < MAXMMAP; i++) {
+    np->mmapped[i] = p->mmapped[i];
+    if (p->mmapped[i] != 0) {
+      if (uvmcopypage(p->pagetable, np->pagetable, p->mmapped[i]) < 0) {
+        freeproc(np);
+        release(&np->lock);
+        return -1;
+      }
+    }
+  }
 
   // copy saved user registers.
   *(np->trapframe) = *(p->trapframe);

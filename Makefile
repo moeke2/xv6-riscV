@@ -160,6 +160,7 @@ UPROGS=\
 	$U/_vmfork\
 	$U/_vmprint\
 	$U/_uptime\
+	$U/_test_mmap\
 
 UPROGS += $(EXTRA_UPROGS)
 
