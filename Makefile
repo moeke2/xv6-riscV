@@ -156,6 +156,7 @@ UPROGS=\
 	$U/_trace\
 	$U/_shebangtest\
 	$U/_tracefd\
+	$U/_pf\
 
 UPROGS += $(EXTRA_UPROGS)
 
