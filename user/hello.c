@@ -1,13 +1,26 @@
 #include "kernel/types.h"
 #include "user/user.h"
 
-int
-main(int argc, char *argv[])
+int main(void)
 {
-    char str[] = "poep\n";
-    if (write(1, str, strlen(str)) != strlen(str)) {
-        fprintf(2, "cat: write error\n");
-        exit(1);
-    }
-    puts("test");
-}
+  printf("Hello, World!\n");
+
+  /* Task - Part 1 */
+  printf("Task - Part 1\n");
+  vmprintmappings();
+
+  /* Task - Part 2 */
+  void *p = sbrk(1);
+  if (p == 0)
+  {
+    fprintf(2, "sbrk() failed\n");
+    exit(1);
+  }
+  printf("Task - Part 2\n");
+  int poep = 100;
+  int test = 20;
+  test = poep + test;
+  vmprintmappings();
+
+  return 0;
+} 

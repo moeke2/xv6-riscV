@@ -157,6 +157,8 @@ UPROGS=\
 	$U/_shebangtest\
 	$U/_tracefd\
 	$U/_pf\
+	$U/_vmfork\
+	$U/_vmprint\
 
 UPROGS += $(EXTRA_UPROGS)
 
