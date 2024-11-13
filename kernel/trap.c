@@ -68,8 +68,18 @@ usertrap(void)
   } else if((which_dev = devintr()) != 0){
     // ok
   } else {
-    printf("usertrap(): unexpected scause 0x%lx pid=%d\n", r_scause(), p->pid);
-    printf("            sepc=0x%lx stval=0x%lx\n", r_sepc(), r_stval());
+    if (r_scause() == 2){
+      printf("usertrap(): illegal instruction in process pid=%d\n", p->pid);
+      printf("            at instruction pointer = 0x%lx\n",r_sepc());
+    }
+    else if (r_scause() == 0xf){
+      printf("usertrap(): store to nullptr in process pid=%d\n", p->pid);
+      printf("            at PC = 0x%lx\n",r_sepc());
+    }
+    else{
+      printf("usertrap(): unexpected scause 0x%lx pid=%d\n", r_scause(), p->pid);
+      printf("            sepc=0x%lx stval=0x%lx\n", r_sepc(), r_stval());
+    }
     setkilled(p);
   }
 
