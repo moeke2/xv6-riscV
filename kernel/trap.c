@@ -72,9 +72,18 @@ usertrap(void)
       printf("usertrap(): illegal instruction in process pid=%d\n", p->pid);
       printf("            at instruction pointer = 0x%lx\n",r_sepc());
     }
-    else if (r_scause() == 0xf){
-      printf("usertrap(): store to nullptr in process pid=%d\n", p->pid);
-      printf("            at PC = 0x%lx\n",r_sepc());
+    else if (r_scause() == 13 || r_scause() == 15){
+      uint64 vma = r_stval();
+      if (vma == 0 && r_scause() == 15) {
+        // null pointer store
+        printf("usertrap(): store to nullptr (0x%lx)  pid=%d\n", r_scause(), p->pid);
+        printf("            at IP = 0x%lx\n", r_sepc());
+        setkilled(p);
+      } else {
+        // enable interrupts before handling the page fault and after saving the address
+        //intr_on();
+        //pagefault(vma);   this is for exercise 4
+      }
     }
     else{
       printf("usertrap(): unexpected scause 0x%lx pid=%d\n", r_scause(), p->pid);

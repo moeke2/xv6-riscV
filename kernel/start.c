@@ -18,6 +18,8 @@ start()
   unsigned long x = r_mstatus();
   x &= ~MSTATUS_MPP_MASK;
   x |= MSTATUS_MPP_S;
+  x |= (1 << 13); // enable FPU
+
   w_mstatus(x);
 
   // set M Exception Program Counter to main, for mret.
