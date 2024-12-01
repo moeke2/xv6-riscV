@@ -159,6 +159,8 @@ UPROGS=\
 	$U/_uptime\
 	$U/_test_mmap\
 	$U/_handlertest\
+	$U/_fputest\
+	$U/_fpuforktest\
 
 UPROGS += $(EXTRA_UPROGS)
 

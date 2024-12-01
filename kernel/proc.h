@@ -85,6 +85,41 @@ struct trapframe {
   /* 264 */ uint64 t4;
   /* 272 */ uint64 t5;
   /* 280 */ uint64 t6;
+  
+  /* 288 */ double f0;
+  /* 296 */ double f1;
+  /* 304 */ double f2;
+  /* 312 */ double f3;
+  /* 320 */ double f4;
+  /* 328 */ double f5;
+  /* 336 */ double f6;
+  /* 344 */ double f7;
+  /* 352 */ double f8;
+  /* 360 */ double f9;
+  /* 368 */ double f10;
+  /* 376 */ double f11;
+  /* 384 */ double f12;
+  /* 392 */ double f13;
+  /* 400 */ double f14;
+  /* 408 */ double f15;
+  /* 416 */ double f16;
+  /* 424 */ double f17;
+  /* 432 */ double f18;
+  /* 440 */ double f19;
+  /* 448 */ double f20;
+  /* 456 */ double f21;
+  /* 464 */ double f22;
+  /* 472 */ double f23;
+  /* 480 */ double f24;
+  /* 488 */ double f25;
+  /* 496 */ double f26;
+  /* 504 */ double f27;
+  /* 512 */ double f28;
+  /* 520 */ double f29;
+  /* 528 */ double f30;
+  /* 536 */ double f31;
+  /* 544 */ uint32 fcsr;
+
 };
 
 enum procstate { UNUSED, USED, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
