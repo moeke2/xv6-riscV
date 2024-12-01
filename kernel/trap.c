@@ -7,7 +7,7 @@
 #include "defs.h"
 
 struct spinlock tickslock;
-uint ticks;
+uint ticks __attribute__((section(".vdso")));
 
 extern char trampoline[], uservec[], userret[];
 

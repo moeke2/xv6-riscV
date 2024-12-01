@@ -40,5 +40,13 @@ SECTIONS
     *(.bss .bss.*)
   }
 
+  .vdso : {            /* Start an "output section" named .vdso */
+    . = ALIGN(0x1000); /* Align the current address (.) on a page boundary */
+    _vdso_start = .;   /* Create a symbol _vdso_start and assign it the current address */
+    *(.vdso);          /* Put all "input sections" named .vdso in the current "output section" */
+    . = ALIGN(0x1000); /* Align the current address on a page boundary */
+    ASSERT(. - _vdso_start == 0x1000, "error: vdso section exceeds one page");
+  }
+
   PROVIDE(end = .);
 }

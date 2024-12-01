@@ -32,6 +32,7 @@ void halt(void) __attribute__((noreturn));
 int getnumsyscalls(void);
 void traceme(int);
 int tracemefd(int);
+int mmap(uint64 addr, int perms);
 
 
 // ulib.c
@@ -50,6 +51,7 @@ int atoi(const char*);
 int memcmp(const void *, const void *, uint);
 void *memcpy(void *, const void *, uint);
 int puts(const char*);
+int fastuptime(void);
 
 // umalloc.c
 void* malloc(uint);

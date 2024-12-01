@@ -115,6 +115,7 @@ struct proc {
   uint64 numsyscalls;
   int traceme;
   int tracefd;
+  uint64 mmapped[MAXMMAP];
 };
 
 #endif

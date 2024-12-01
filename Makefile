@@ -156,6 +156,8 @@ UPROGS=\
 	$U/_trace\
 	$U/_shebangtest\
 	$U/_tracefd\
+	$U/_uptime\
+	$U/_test_mmap\
 
 UPROGS += $(EXTRA_UPROGS)
 
