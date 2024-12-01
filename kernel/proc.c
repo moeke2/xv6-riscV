@@ -498,6 +498,12 @@ void scheduler(void)
   struct cpu *c = mycpu();
 
   c->proc = 0;
+
+  c->init = true;
+  c->interrupts.disk = 0;
+  c->interrupts.timer = 0;
+  c->interrupts.uart = 0;
+
   for (;;)
   {
     // The most recent process to run may have had interrupts

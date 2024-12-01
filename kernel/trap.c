@@ -201,6 +201,8 @@ devintr()
 {
   uint64 scause = r_scause();
 
+  struct cpu *cpu = mycpu();
+
   if(scause == 0x8000000000000009L){
     // this is a supervisor external interrupt, via PLIC.
 
@@ -208,8 +210,10 @@ devintr()
     int irq = plic_claim();
 
     if(irq == UART0_IRQ){
+      cpu->interrupts.uart++;
       uartintr();
     } else if(irq == VIRTIO0_IRQ){
+      cpu->interrupts.disk++;
       virtio_disk_intr();
     } else if(irq){
       printf("unexpected interrupt irq=%d\n", irq);
@@ -224,6 +228,7 @@ devintr()
     return 1;
   } else if(scause == 0x8000000000000005L){
     // timer interrupt.
+    cpu->interrupts.timer++;
     clockintr();
     return 2;
   } else {

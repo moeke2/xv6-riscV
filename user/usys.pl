@@ -42,3 +42,4 @@ entry("getnumsyscalls");
 entry("traceme");
 entry("tracemefd");
 entry("mmap");
+entry("printinterrupts");

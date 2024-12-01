@@ -147,3 +147,36 @@ sys_mmap(void)
   p->mmapped[idx] = vaddr;
   return 0;
 }
+
+uint64
+sys_printinterrupts(void)
+{
+  unsigned n = 0;
+  struct cpu cpu = cpus[n];
+  printf("\t");
+  while (cpu.init && n < NCPU) {
+    printf("CPU%u\t", n);
+    cpu = cpus[++n];
+  }
+  printf("\n");
+
+  printf("TMR:\t");
+  for (unsigned i = 0; i < n; ++i) {
+    printf("%u\t", cpus[i].interrupts.timer);
+  }
+  printf("\n");
+
+  printf("UART:\t");
+  for (unsigned i = 0; i < n; ++i) {
+    printf("%u\t", cpus[i].interrupts.uart);
+  }
+  printf("\n");
+
+  printf("DISK:\t");
+  for (unsigned i = 0; i < n; ++i) {
+    printf("%u\t", cpus[i].interrupts.disk);
+  }
+  printf("\n");
+
+  return 0;
+}

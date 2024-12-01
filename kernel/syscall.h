@@ -29,5 +29,6 @@
 #define SYS_traceme   25
 #define SYS_tracemefd   26
 #define SYS_mmap 27
+#define SYS_printinterrupts 28
 
 #endif

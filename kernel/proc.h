@@ -2,6 +2,7 @@
 #define XV6_KERNEL_PROC_H
 
 #include "types.h"
+#include "stdbool.h"
 #include "riscv.h"
 #include "param.h"
 #include "spinlock.h"
@@ -26,12 +27,20 @@ struct context {
   uint64 s11;
 };
 
+struct interrupt_c {
+  unsigned disk;
+  unsigned timer;
+  unsigned uart;
+};
+
 // Per-CPU state.
 struct cpu {
+  bool init;
   struct proc *proc;          // The process running on this cpu, or null.
   struct context context;     // swtch() here to enter scheduler().
   int noff;                   // Depth of push_off() nesting.
   int intena;                 // Were interrupts enabled before push_off()?
+  struct interrupt_c interrupts;  // interrupt counters
 };
 
 extern struct cpu cpus[NCPU];
@@ -85,7 +94,7 @@ struct trapframe {
   /* 264 */ uint64 t4;
   /* 272 */ uint64 t5;
   /* 280 */ uint64 t6;
-  
+
   /* 288 */ double f0;
   /* 296 */ double f1;
   /* 304 */ double f2;

@@ -52,6 +52,7 @@ int memcmp(const void *, const void *, uint);
 void *memcpy(void *, const void *, uint);
 int puts(const char*);
 int fastuptime(void);
+void printinterrupts(void);
 
 // umalloc.c
 void* malloc(uint);
