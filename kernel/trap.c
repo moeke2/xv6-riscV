@@ -76,7 +76,12 @@ usertrap(void)
         printf("usertrap(): store to nullptr (0x%lx)  pid=%d\n", r_scause(), p->pid);
         printf("            at IP = 0x%lx\n", r_sepc());
         setkilled(p);
-      } 
+      } else {
+        // enable interrupts before handling the page fault and after saving the address
+        intr_on();
+        pagefault(vma);
+      }
+
     } else if (r_scause() == 2) {
       printf("usertrap(): illegal instruction (0x%lx) pid=%d\n", r_scause(), p->pid);
       printf("            at instruction pointer = 0x%lx\n", r_sepc());

@@ -5,6 +5,7 @@
 #include "riscv.h"
 #include "defs.h"
 #include "fs.h"
+#include "proc.h"
 
 /*
  * the kernel's page table.
@@ -190,7 +191,7 @@ uvmunmap(pagetable_t pagetable, uint64 va, uint64 npages, int do_free)
     if((pte = walk(pagetable, a, 0)) == 0)
       panic("uvmunmap: walk");
     if((*pte & PTE_V) == 0)
-      panic("uvmunmap: not mapped");
+      continue; // skip this iteration
     if(PTE_FLAGS(*pte) == PTE_V)
       panic("uvmunmap: not a leaf");
     if(do_free){
@@ -514,5 +515,37 @@ static void print_pagetable(pagetable_t pagetable, uint64 base_va, int level)
 void
 vmprintmappings(pagetable_t pagetable)
 {
+  printf("----\n");
   print_pagetable(pagetable, 0, 2);
 }
+
+void pagefault(uint64 va)
+{
+  struct proc *p = myproc();
+
+  if (va < p->sbrk_base || va > p->sz) {
+    setkilled(p);
+    return;
+  }
+
+  pte_t *pte = walk(p->pagetable, va, 0);
+  if (pte != 0 && (*pte & PTE_V)) {
+    setkilled(p);
+    return;
+  }
+
+  void *mem = kalloc();
+  if(mem == 0){
+    setkilled(p);
+    return;
+  }
+
+  memset(mem, 0, PGSIZE);
+
+  if(mappages(p->pagetable, PGROUNDDOWN(va), PGSIZE, (uint64)mem, PTE_R|PTE_U|PTE_W) != 0){
+    kfree(mem);
+    setkilled(p);
+    return;
+  }
+}
+

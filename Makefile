@@ -162,6 +162,7 @@ UPROGS=\
 	$U/_fputest\
 	$U/_fpuforktest\
 	$U/_printirq\
+	$U/_testtraps\
 
 UPROGS += $(EXTRA_UPROGS)
 

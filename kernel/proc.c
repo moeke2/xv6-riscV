@@ -178,6 +178,7 @@ freeproc(struct proc *p)
     proc_freepagetable(p->pagetable, p->sz);
   p->pagetable = 0;
   p->sz = 0;
+  p->sbrk_base = 0;
   p->pid = 0;
   p->parent = 0;
   p->name[0] = 0;
@@ -266,6 +267,7 @@ void userinit(void)
   // and data into it.
   uvmfirst(p->pagetable, initcode, sizeof(initcode));
   p->sz = PGSIZE;
+  p->sbrk_base = PGSIZE;
 
   // prepare for the very first "return" from kernel to user.
   p->trapframe->epc = 0;     // user program counter
@@ -289,10 +291,7 @@ int growproc(int n)
   sz = p->sz;
   if (n > 0)
   {
-    if ((sz = uvmalloc(p->pagetable, sz, sz + n, PTE_W)) == 0)
-    {
-      return -1;
-    }
+    sz += n;
   }
   else if (n < 0)
   {
@@ -324,6 +323,7 @@ int fork(void)
     return -1;
   }
   np->sz = p->sz;
+  np->sbrk_base = p->sbrk_base;
 
   // copy mmapped pages from parent to child
   for (int i = 0; i < MAXMMAP; i++)
