@@ -29,6 +29,10 @@ int sleep(int);
 int uptime(void);
 void vmprintmappings(void);
 void halt(void) __attribute__((noreturn));
+int getnumsyscalls(void);
+void traceme(int);
+int tracemefd(int);
+
 
 // ulib.c
 int stat(const char*, struct stat*);

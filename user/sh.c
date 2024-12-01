@@ -152,6 +152,9 @@ processline(char* buf)
       fprintf(2, "cannot cd %s\n", buf+3);
     return;
   }
+  if (buf[0] == '#'){
+    return;
+  }
   if(fork1() == 0)
     runcmd(parsecmd(buf));
   wait(0);
@@ -182,7 +185,7 @@ execute_script(const char* path)
 }
 
 int
-main(void)
+main(int argc, char *argv[])
 {
   static char buf[100];
   int fd;
@@ -198,9 +201,18 @@ main(void)
   // Read and process .shinit if it exists.
   execute_script(".shinit");
 
-  // Read and run input commands.
-  while(getcmd(buf, sizeof(buf)) >= 0){
-    processline(buf);
+  if (argc == 1){
+    // Read and run input commands.
+    while(getcmd(buf, sizeof(buf)) >= 0){
+      processline(buf);
+    }
+  }
+  else if (argc == 2){
+    //printf("[sh] Running: %s", argv[1]);
+    execute_script(argv[1]);
+  } 
+  else {
+    panic("[sh] sh only support executing a single script\n");
   }
   exit(0);
 }

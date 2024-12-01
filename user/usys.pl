@@ -38,3 +38,6 @@ entry("sleep");
 entry("uptime");
 entry("vmprintmappings");
 entry("halt");
+entry("getnumsyscalls");
+entry("traceme");
+entry("tracemefd");

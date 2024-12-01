@@ -28,7 +28,8 @@ OBJS = \
   $K/sysfile.o \
   $K/kernelvec.o \
   $K/plic.o \
-  $K/virtio_disk.o
+  $K/virtio_disk.o\
+  $K/trace.o\
 
 # riscv64-unknown-elf- or riscv64-linux-gnu-
 # perhaps in /opt/riscv/bin
@@ -150,8 +151,15 @@ UPROGS=\
 	$U/_hello\
 	$U/_xargs\
 	$U/_introspecion\
+	$U/_hi_asm_write\
+	$U/_syscallcount\
+	$U/_trace\
+	$U/_shebangtest\
+	$U/_tracefd\
 
 UPROGS += $(EXTRA_UPROGS)
+
+EXTRA_FS_FILES += $U/hello.sh
 
 fs.img: mkfs/mkfs README $(UPROGS) $(EXTRA_FS_FILES)
 	mkfs/mkfs fs.img README $(UPROGS) $(EXTRA_FS_FILES)
