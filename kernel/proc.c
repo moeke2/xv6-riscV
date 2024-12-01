@@ -166,16 +166,15 @@ found:
 static void
 freeproc(struct proc *p)
 {
-  for (int i = 0; i < MAXMMAP; i++)
-  {
+  for (int i=0; i < MAXMMAP; i++)
     if (p->mmapped[i] != 0)
       uvmunmap(p->pagetable, p->mmapped[i], 1, 1);
-    memset(p->mmapped, 0, sizeof(p->mmapped));
-  }
-  if (p->trapframe)
-    kfree((void *)p->trapframe);
+  memset(p->mmapped, 0, sizeof(p->mmapped));
+
+  if(p->trapframe)
+    kfree((void*)p->trapframe);
   p->trapframe = 0;
-  if (p->pagetable)
+  if(p->pagetable)
     proc_freepagetable(p->pagetable, p->sz);
   p->pagetable = 0;
   p->sz = 0;
@@ -332,7 +331,8 @@ int fork(void)
     np->mmapped[i] = p->mmapped[i];
     if (p->mmapped[i] != 0)
     {
-      if(uvmcopypage(p->pagetable,np->pagetable,p->mmapped[i]) < 0){
+      if (uvmcopypage(p->pagetable, np->pagetable, p->mmapped[i]) < 0)
+      {
         freeproc(np);
         release(&np->lock);
         return -1;
