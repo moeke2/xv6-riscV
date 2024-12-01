@@ -158,6 +158,7 @@ UPROGS=\
 	$U/_tracefd\
 	$U/_uptime\
 	$U/_test_mmap\
+	$U/_handlertest\
 
 UPROGS += $(EXTRA_UPROGS)
 

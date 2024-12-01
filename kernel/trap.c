@@ -68,9 +68,24 @@ usertrap(void)
   } else if((which_dev = devintr()) != 0){
     // ok
   } else {
-    printf("usertrap(): unexpected scause 0x%lx pid=%d\n", r_scause(), p->pid);
-    printf("            sepc=0x%lx stval=0x%lx\n", r_sepc(), r_stval());
-    setkilled(p);
+    // check for load or store page faults
+    if (r_scause() == 13 || r_scause() == 15) {
+      uint64 vma = r_stval();
+      if (vma == 0 && r_scause() == 15) {
+        // null pointer store
+        printf("usertrap(): store to nullptr (0x%lx)  pid=%d\n", r_scause(), p->pid);
+        printf("            at IP = 0x%lx\n", r_sepc());
+        setkilled(p);
+      } 
+    } else if (r_scause() == 2) {
+      printf("usertrap(): illegal instruction (0x%lx) pid=%d\n", r_scause(), p->pid);
+      printf("            at instruction pointer = 0x%lx\n", r_sepc());
+      setkilled(p);
+    } else {
+      printf("usertrap(): unexpected scause 0x%lx pid=%d\n", r_scause(), p->pid);
+      printf("            sepc=0x%lx stval=0x%lx\n", r_sepc(), r_stval());
+      setkilled(p);
+    }
   }
 
   if(killed(p))
