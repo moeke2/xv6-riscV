@@ -100,6 +100,8 @@ vprintf(int fd, const char *fmt, va_list ap)
           putc(fd, *s);
       } else if(c0 == '%'){
         putc(fd, '%');
+      } else if(c0 == 'c'){
+        putc(fd, va_arg(ap, uint));
       } else {
         // Unknown % sequence.  Print it to draw attention.
         putc(fd, '%');

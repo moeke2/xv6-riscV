@@ -335,6 +335,17 @@ sys_open(void)
     }
   }
 
+  // Check R/W permissions on file
+  int needs_read  = !(omode & O_WRONLY);
+  int needs_write = (omode & O_WRONLY) || (omode & O_RDWR);
+
+  if ((needs_read  && !(ip->mode & M_READ)) ||
+      (needs_write && !(ip->mode & M_WRITE))) {
+    iunlockput(ip);
+    end_op();
+    return -1;
+  }
+
   if(ip->type == T_DEVICE && (ip->major < 0 || ip->major >= NDEV)){
     iunlockput(ip);
     end_op();
@@ -501,5 +512,39 @@ sys_pipe(void)
     fileclose(wf);
     return -1;
   }
+  return 0;
+}
+
+uint64
+sys_chmod()
+{
+  char path[MAXPATH];
+
+  if (argstr(0, path, sizeof(path)) < 0) {
+    return -1;
+  }
+
+  int mode;
+  argint(1, &mode);
+
+  if ((mode & ~M_ALL) != 0) {
+    return -1;
+  }
+
+  begin_op();
+
+  struct inode* ip = namei(path);
+
+  if (ip == 0) {
+    end_op();
+    return -1;
+  }
+
+  ilock(ip);
+  ip->mode = mode;
+  iupdate(ip);
+  iunlockput(ip);
+
+  end_op();
   return 0;
 }

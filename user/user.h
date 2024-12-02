@@ -33,6 +33,7 @@ int puts(const char*);
 int getnumsyscalls(void);
 void traceme(int);
 int mmap(uint64 addr, int perms);
+int chmod(const char*, int);
 
 // ulib.c
 int stat(const char*, struct stat*);

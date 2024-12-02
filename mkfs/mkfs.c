@@ -38,7 +38,7 @@ void wsect(uint, void*);
 void winode(uint, struct dinode*);
 void rinode(uint inum, struct dinode *ip);
 void rsect(uint sec, void *buf);
-uint ialloc(ushort type);
+uint ialloc(ushort type, uint mode);
 void iappend(uint inum, void *p, int n);
 void die(const char *);
 
@@ -114,7 +114,7 @@ main(int argc, char *argv[])
   memmove(buf, &sb, sizeof(sb));
   wsect(1, buf);
 
-  rootino = ialloc(T_DIR);
+  rootino = ialloc(T_DIR, M_ALL);
   assert(rootino == ROOTINO);
 
   bzero(&de, sizeof(de));
@@ -139,17 +139,31 @@ main(int argc, char *argv[])
 
     if((fd = open(argv[i], 0)) < 0)
       die(argv[i]);
+    
+    int is_executable = 0;
 
     // Skip leading _ in name when writing to file system.
     // The binaries are named _rm, _cat, etc. to keep the
     // build operating system from trying to execute them
     // in place of system binaries like rm and cat.
-    if(shortname[0] == '_')
+    if(shortname[0] == '_'){
       shortname += 1;
+      is_executable = 1;
+    }
+
 
     assert(strlen(shortname) <= DIRSIZ);
     
-    inum = ialloc(T_FILE);
+    uint mode;
+
+    if (is_executable) {
+      mode = M_READ;
+    } else {
+      mode = M_READ | M_WRITE;
+    }
+
+    inum = ialloc(T_FILE, mode);
+
 
     bzero(&de, sizeof(de));
     de.inum = xshort(inum);
@@ -220,7 +234,7 @@ rsect(uint sec, void *buf)
 }
 
 uint
-ialloc(ushort type)
+ialloc(ushort type, uint mode)
 {
   uint inum = freeinode++;
   struct dinode din;
@@ -229,6 +243,7 @@ ialloc(ushort type)
   din.type = xshort(type);
   din.nlink = xshort(1);
   din.size = xint(0);
+  din.mode = xint(mode);
   winode(inum, &din);
   return inum;
 }

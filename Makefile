@@ -164,6 +164,7 @@ UPROGS=\
 	$U/_handlertest\
 	$U/_fputest\
 	$U/_fpuforktest\
+	$U/_chmod\
 
 UPROGS += $(EXTRA_UPROGS)
 

@@ -41,3 +41,4 @@ entry("halt");
 entry("getnumsyscalls");
 entry("traceme");
 entry("mmap");
+entry("chmod");

@@ -7,12 +7,17 @@
 #define T_FILE    2   // File
 #define T_DEVICE  3   // Device
 
+#define M_READ    (1 << 0)
+#define M_WRITE   (1 << 1)
+#define M_ALL     (M_READ | M_WRITE)
+
 struct stat {
   int dev;     // File system's disk device
   uint ino;    // Inode number
   short type;  // Type of file
   short nlink; // Number of links to file
   uint64 size; // Size of file in bytes
+  uint mode;
 };
 
 #endif

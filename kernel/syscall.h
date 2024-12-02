@@ -28,6 +28,7 @@
 #define SYS_getnumsyscalls  24
 #define SYS_traceme 25
 #define SYS_mmap   26
+#define SYS_chmod  27
 
 
 #endif
