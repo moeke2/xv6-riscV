@@ -34,6 +34,7 @@ int getnumsyscalls(void);
 void traceme(int);
 int mmap(uint64 addr, int perms);
 int chmod(const char*, int);
+int symlink(const char*, const char*);
 
 // ulib.c
 int stat(const char*, struct stat*);

@@ -6,6 +6,7 @@
 #define T_DIR     1   // Directory
 #define T_FILE    2   // File
 #define T_DEVICE  3   // Device
+#define T_SYMLINK 4   // Symbolic link
 
 #define M_READ    (1 << 0)
 #define M_WRITE   (1 << 1)

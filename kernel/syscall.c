@@ -108,6 +108,7 @@ extern uint64 sys_getnumsyscalls(void);
 extern uint64 sys_traceme(void);
 extern uint64 sys_mmap(void);
 extern uint64 sys_chmod(void);
+extern uint64 sys_symlink(void);
 
 // An array mapping syscall numbers from syscall.h
 // to the function thatsys_traceme handles the system call.
@@ -139,6 +140,7 @@ static uint64 (*syscalls[])(void) = {
 [SYS_traceme] sys_traceme,
 [SYS_mmap]    sys_mmap,
 [SYS_chmod]   sys_chmod,
+[SYS_symlink]    sys_symlink,
 };
 
 void

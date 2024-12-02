@@ -42,3 +42,4 @@ entry("getnumsyscalls");
 entry("traceme");
 entry("mmap");
 entry("chmod");
+entry("symlink");

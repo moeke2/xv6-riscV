@@ -304,7 +304,7 @@ create(char *path, short type, short major, short minor)
 uint64
 sys_open(void)
 {
-  char path[MAXPATH];
+  char path[MAXPATH], symlinktarget[MAXPATH];
   int fd, omode;
   struct file *f;
   struct inode *ip;
@@ -327,7 +327,31 @@ sys_open(void)
       end_op();
       return -1;
     }
-    ilock(ip);
+    // Follow symbolic links for up to 10 links
+    for (int i = 0; i < 10; ++i) {
+      ilock(ip);
+      // If inode is not symbolic link or O_NOFOLLOW is set,
+      // continue with current inode
+      if(ip->type != T_SYMLINK || omode & O_NOFOLLOW) {  goto found; }
+      
+      // Otherwise follow the link
+      if (ip->type == T_SYMLINK && readi(ip, 0, (uint64) symlinktarget, 0, MAXPATH) == 0) {
+        iunlockput(ip);
+        end_op();
+        return -1;
+      }
+      iunlockput(ip);
+      // Get the inode corresponding to symlink target and continue
+      if((ip = namei(symlinktarget)) == 0){
+        end_op();
+        return -1;
+      }
+    }
+    // Not found
+    end_op();
+    return -1;
+    
+found:
     if(ip->type == T_DIR && omode != O_RDONLY){
       iunlockput(ip);
       end_op();
@@ -545,6 +569,40 @@ sys_chmod()
   iupdate(ip);
   iunlockput(ip);
 
+  end_op();
+  return 0;
+}
+
+// sys_symlink(const char *target, const char *path):
+// create a new symlink at path that refers to target
+uint64
+sys_symlink(void)
+{
+  char target[MAXPATH], path[MAXPATH];
+  struct inode *ip;
+
+  // Get arguments
+  if(argstr(0, target, MAXPATH) < 0 || argstr(1, path, MAXPATH) < 0)
+    return -1;
+
+  begin_op();
+
+  // Create a new inode with type symlink
+  // Create will fail if the file already exists
+  if((ip = create(path, T_SYMLINK, 0, 0)) == 0){
+    end_op();
+    return -1;
+  }
+
+  // Store the target of the symlink in inode's data block
+  int size = strlen(target);
+  if (writei(ip, 0, (uint64) target, 0, size) < size) {
+    iunlockput(ip);
+    end_op();
+    return -1;
+  }
+
+  iunlockput(ip);
   end_op();
   return 0;
 }

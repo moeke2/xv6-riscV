@@ -29,6 +29,7 @@
 #define SYS_traceme 25
 #define SYS_mmap   26
 #define SYS_chmod  27
+#define SYS_symlink 28
 
 
 #endif
