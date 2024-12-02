@@ -37,4 +37,7 @@ entry("sbrk");
 entry("sleep");
 entry("uptime");
 entry("vmprintmappings");
+entry("refcountdump");
 entry("halt");
+entry("mmap");
+entry("printbookkeeping");

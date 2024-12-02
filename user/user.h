@@ -28,7 +28,10 @@ void* sbrk(int);
 int sleep(int);
 int uptime(void);
 void vmprintmappings(void);
+void refcountdump(void);
 void halt(void) __attribute__((noreturn));
+int mmap(uint64 addr, int perms, int shared);
+void printbookkeeping(void);
 
 // ulib.c
 int stat(const char*, struct stat*);
@@ -45,6 +48,7 @@ void* memset(void*, int, uint);
 int atoi(const char*);
 int memcmp(const void *, const void *, uint);
 void *memcpy(void *, const void *, uint);
+int fastuptime(void);
 
 // umalloc.c
 void* malloc(uint);

@@ -24,6 +24,9 @@
 #define SYS_mkdir  20
 #define SYS_close  21
 #define SYS_vmprintmappings 22
-#define SYS_halt   23
+#define SYS_refcountdump 23
+#define SYS_mmap   24
+#define SYS_printbookkeeping 25
+#define SYS_halt   26
 
 #endif

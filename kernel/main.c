@@ -3,6 +3,7 @@
 #include "memlayout.h"
 #include "riscv.h"
 #include "defs.h"
+#include "refcount.h"
 
 volatile static int started = 0;
 
@@ -17,6 +18,7 @@ main()
     printf("xv6 kernel is booting\n");
     printf("\n");
     kinit();         // physical page allocator
+    refcount_init();
     kvminit();       // create kernel page table
     kvminithart();   // turn on paging
     procinit();      // process table

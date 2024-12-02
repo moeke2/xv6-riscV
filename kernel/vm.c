@@ -1,3 +1,4 @@
+#include "spinlock.h"
 #include "param.h"
 #include "types.h"
 #include "memlayout.h"
@@ -339,6 +340,41 @@ uvmcopy(pagetable_t old, pagetable_t new, uint64 sz)
 
  err:
   uvmunmap(new, 0, i / PGSIZE, 1);
+  return -1;
+}
+
+// Given a parent process's page table, copy
+// a single page of memory into a child's page table.
+// Copies both the page table entry and the
+// physical memory.
+// returns 0 on success, -1 on failure.
+// frees any allocated pages on failure.
+int
+uvmcopypage(pagetable_t old, pagetable_t new, uint64 va)
+{
+  pte_t *pte;
+  uint64 pa;
+  uint flags;
+  char *mem;
+
+  if((pte = walk(old, va, 0)) == 0)
+    panic("uvmcopy: pte should exist");
+  if((*pte & PTE_V) == 0)
+    panic("uvmcopy: page not present");
+  pa = PTE2PA(*pte);
+  flags = PTE_FLAGS(*pte);
+  if((mem = kalloc()) == 0)
+    goto err;
+  memmove(mem, (char*)pa, PGSIZE);
+  if(mappages(new, va, PGSIZE, (uint64)mem, flags) != 0){
+    kfree(mem);
+    goto err;
+  }
+
+  return 0;
+
+ err:
+  uvmunmap(new, va, 1, 1);
   return -1;
 }
 

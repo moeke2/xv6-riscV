@@ -5,6 +5,10 @@
 #include "riscv.h"
 #include "param.h"
 #include "spinlock.h"
+#include "defs.h"
+#include "refcount.h"
+#include "bitmap.h"
+#include "bookkeeping.h"
 
 // Saved registers for kernel context switches.
 struct context {
@@ -89,6 +93,11 @@ struct trapframe {
 
 enum procstate { UNUSED, USED, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
+struct mmap_page {
+  uint64 vaddr;
+  refcount_t refcount;
+};
+
 // Per-process state
 struct proc {
   struct spinlock lock;
@@ -112,6 +121,10 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+
+  // to keep track of mmapped pages
+  struct mmap_page mmapped[MAXMMAP];
+  bookkeeping_t bookkeeping;   // Debugging log
 };
 
 #endif
