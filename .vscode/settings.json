@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "*.tcc": "c",
-        "param.h": "c"
+        "param.h": "c",
+        "memlayout.h": "c"
     }
 }

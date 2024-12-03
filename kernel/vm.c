@@ -16,6 +16,8 @@ extern char etext[];  // kernel.ld sets this to end of kernel code.
 
 extern char trampoline[]; // trampoline.S
 
+extern char *null_page; //kalloc.c
+
 // Make a direct-map page table for the kernel.
 pagetable_t
 kvmmake(void)
@@ -524,28 +526,57 @@ void pagefault(uint64 va)
   struct proc *p = myproc();
 
   if (va < p->sbrk_base || va > p->sz) {
-    setkilled(p);
+    setkilled(p);  
     return;
   }
 
   pte_t *pte = walk(p->pagetable, va, 0);
-  if (pte != 0 && (*pte & PTE_V)) {
-    setkilled(p);
+  if (pte == 0) {
+    setkilled(p);  
     return;
   }
 
-  void *mem = kalloc();
-  if(mem == 0){
+ 
+  if (*pte & PTE_V) {
+    if (*pte & PTE_W) {  
+      setkilled(p);
+      return;
+    }
+
+    uvmunmap(p->pagetable, PGROUNDDOWN(va), 1, 0);  
+
+    void *mem = kalloc();
+    if (mem == 0) {
+      setkilled(p); 
+      return;
+    }
+
+    memset(mem, 0, PGSIZE);
+
+    if (mappages(p->pagetable, PGROUNDDOWN(va), PGSIZE, (uint64)mem, PTE_R | PTE_U | PTE_W) != 0) {
+      kfree(mem);  
+      setkilled(p);  
+      return;
+    }
+  } else {
     setkilled(p);
     return;
   }
+}
 
-  memset(mem, 0, PGSIZE);
+uint64
+uvmalloc_null_cow(pagetable_t pagetable, uint64 oldsz, uint64 newsz){
+    if (newsz <= oldsz)
+        return oldsz;
+        
+    uint64 a;
 
-  if(mappages(p->pagetable, PGROUNDDOWN(va), PGSIZE, (uint64)mem, PTE_R|PTE_U|PTE_W) != 0){
-    kfree(mem);
-    setkilled(p);
-    return;
-  }
+    for (a = PGROUNDUP(oldsz); a < newsz; a += PGSIZE) {
+      // Map the null_page to the current address as read-only (PTE_U | PTE_R)
+      if (mappages(pagetable, a, PGSIZE, (uint64)null_page, PTE_U | PTE_R) != 0) {
+          return 0;  
+      }
+    }
+    return newsz;
 }
 
