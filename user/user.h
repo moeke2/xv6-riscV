@@ -32,6 +32,7 @@ void refcountdump(void);
 void halt(void) __attribute__((noreturn));
 int mmap(uint64 addr, int perms, int shared);
 void printbookkeeping(void);
+int syscallfilter(int num);
 
 // ulib.c
 int stat(const char*, struct stat*);

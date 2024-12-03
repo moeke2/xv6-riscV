@@ -106,6 +106,8 @@ extern uint64 sys_refcountdump(void);
 extern uint64 sys_halt(void);
 extern uint64 sys_mmap(void);
 extern uint64 sys_printbookkeeping(void);
+extern uint64 sys_syscallfilter(void);
+
 
 // An array mapping syscall numbers from syscall.h
 // to the function that handles the system call.
@@ -136,6 +138,7 @@ static uint64 (*syscalls[])(void) = {
 [SYS_halt]    sys_halt,
 [SYS_mmap]    sys_mmap,
 [SYS_printbookkeeping]  sys_printbookkeeping,
+[SYS_syscallfilter]  sys_syscallfilter,
 };
 
 void
@@ -145,6 +148,12 @@ syscall(void)
   struct proc *p = myproc();
 
   num = p->trapframe->a7;
+
+  if(!is_bit_set(p->bmap, num)){
+    kill(p);
+    exit(1);
+  }
+
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
     // Use num to lookup the system call function for num, call it,
     // and store its return value in p->trapframe->a0

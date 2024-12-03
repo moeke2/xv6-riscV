@@ -41,3 +41,4 @@ entry("refcountdump");
 entry("halt");
 entry("mmap");
 entry("printbookkeeping");
+entry("syscallfilter");

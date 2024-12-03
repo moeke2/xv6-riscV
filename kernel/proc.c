@@ -126,6 +126,7 @@ allocproc(void)
 found:
   p->pid = allocpid();
   p->state = USED;
+  p->bmap = init_bitmap();
 
   // Allocate a trapframe page.
   if((p->trapframe = (struct trapframe *)kalloc()) == 0){
@@ -179,6 +180,7 @@ freeproc(struct proc *p)
   p->killed = 0;
   p->xstate = 0;
   p->state = UNUSED;
+  p->bmap = init_bitmap();
 }
 
 // Create a user page table for a given process, with no user memory,
@@ -315,6 +317,9 @@ fork(void)
     return -1;
   }
   np->sz = p->sz;
+
+  //copy bitmap from parent to child
+  np->bmap = p->bmap;
 
   // Copy mmapped pages from parent to child
   for (int i=0; i < MAXMMAP; i++) {

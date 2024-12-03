@@ -121,6 +121,7 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+  bitmap_t bmap;               // bmap that tells which syscalls are blocked
 
   // to keep track of mmapped pages
   struct mmap_page mmapped[MAXMMAP];

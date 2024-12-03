@@ -9,5 +9,17 @@
 // Returns 0 on success or -1 if the system call number argument is invalid.
 uint64 sys_syscallfilter(void)
 {
-  return -1;
+  int num;
+
+  argint(0, &num);
+
+  struct proc* p = myproc();
+
+  if( num < 1 || num > 28){
+    return -1;
+  }
+
+  p->bmap = clear_bit(p->bmap,num);
+  return 0;
+
 }

@@ -28,5 +28,6 @@
 #define SYS_mmap   24
 #define SYS_printbookkeeping 25
 #define SYS_halt   26
+#define SYS_syscallfilter 27
 
 #endif
