@@ -115,8 +115,10 @@ sys_mmap(void)
   // Feth the system call arguments from the trap frame
   uint64 vaddr;
   int    perms;
+  int    shared;
   argaddr(0, &vaddr);
   argint(1, &perms);
+  argint(2, &shared);
   vaddr = PGROUNDDOWN(vaddr);
 
   // Verify that vaddr is not already mapped
@@ -139,6 +141,14 @@ sys_mmap(void)
   if (idx >= MAXMMAP)
     return -1;
 
+  if(shared > 0){
+    if ((p->mmapped[idx].refcount = refcount_new()) == -1){
+      return -1;
+    }
+  }
+  else {
+    p->mmapped[idx].refcount = -1;
+  }
   // Allocate a new phyisical page and map vaddr
   char * paddr = kalloc();
   if (paddr == 0)

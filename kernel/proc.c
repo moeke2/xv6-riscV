@@ -163,7 +163,10 @@ freeproc(struct proc *p)
 {
   for (int i=0; i < MAXMMAP; i++)
     if (p->mmapped[i].vaddr != 0)
-      uvmunmap(p->pagetable, p->mmapped[i].vaddr, 1, 1);
+      if (refcount_decrement(p->mmapped[i].refcount) == 0)
+        uvmunmap(p->pagetable, p->mmapped[i].vaddr, 1, 1);
+      else 
+        uvmunmap(p->pagetable, p->mmapped[i].vaddr, 1, 0);
   memset(p->mmapped, 0, sizeof(p->mmapped));
 
   if(p->trapframe)
@@ -325,11 +328,14 @@ fork(void)
   for (int i=0; i < MAXMMAP; i++) {
     np->mmapped[i] = p->mmapped[i];
     if (p->mmapped[i].vaddr != 0) {
-      if (uvmcopypage(p->pagetable, np->pagetable, p->mmapped[i].vaddr) < 0) {
+      if (uvmcopypage(p->pagetable, np->pagetable, p->mmapped[i].vaddr, p->mmapped[i].refcount) < 0) {
         freeproc(np);
         release(&np->lock);
         return -1;
       }
+      if (p->mmapped[i].refcount != -1)
+        refcount_increment(p->mmapped[i].refcount);
+        np->mmapped[i].refcount = p->mmapped[i].refcount;
     }
   }
 

@@ -6,6 +6,7 @@
 #include "riscv.h"
 #include "defs.h"
 #include "fs.h"
+#include "proc.h"
 
 /*
  * the kernel's page table.
@@ -350,7 +351,7 @@ uvmcopy(pagetable_t old, pagetable_t new, uint64 sz)
 // returns 0 on success, -1 on failure.
 // frees any allocated pages on failure.
 int
-uvmcopypage(pagetable_t old, pagetable_t new, uint64 va)
+uvmcopypage(pagetable_t old, pagetable_t new, uint64 va, refcount_t refcount)
 {
   pte_t *pte;
   uint64 pa;
@@ -363,9 +364,15 @@ uvmcopypage(pagetable_t old, pagetable_t new, uint64 va)
     panic("uvmcopy: page not present");
   pa = PTE2PA(*pte);
   flags = PTE_FLAGS(*pte);
-  if((mem = kalloc()) == 0)
-    goto err;
-  memmove(mem, (char*)pa, PGSIZE);
+  if (refcount == -1){
+    if((mem = kalloc()) == 0)
+      goto err;
+    memmove(mem, (char*)pa, PGSIZE);
+  }
+  else {
+    mem = pa;
+  }
+  
   if(mappages(new, va, PGSIZE, (uint64)mem, flags) != 0){
     kfree(mem);
     goto err;
